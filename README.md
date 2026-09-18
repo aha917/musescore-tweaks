@@ -82,11 +82,15 @@ Unlike `clean-mscz.py`, this one strips **both system and page breaks**. It repo
 
 MuseScore 4 stores font choices as `<...FontFace>` entries inside the `.mss` style files bundled in a `.mscz` (the main score style plus one per linked part). This script rewrites every such occurrence across all `.mss` members and leaves the rest of the archive byte-identical.
 
-It takes a single file and **edits it in place**, writing a `.bak` backup alongside first:
+It takes one or more files and **edits each in place**, writing a backup of every original first (see below). Pass a single score, several, or a glob to process every `.mscz` in the current directory at once:
 
 ```bash
-python3 replace_font.py score.mscz
+python3 replace_font.py score.mscz              # one file
+python3 replace_font.py a.mscz b.mscz c.mscz    # several
+python3 replace_font.py *.mscz                  # every .mscz in this directory
 ```
+
+Each backup is written to `_archive/tmp/<name>.mscz.bak` next to the file (the directory is created if needed), and the script reports the replacement count per file.
 
 The fonts are set by two constants at the top of the file:
 
@@ -99,5 +103,5 @@ Change `NEW_FONT` to whatever font you want to switch to (for example `"Liberati
 
 ## Notes
 
-- The two `clean-*` scripts never touch your originals — they emit copies into `./cleaned/`. `replace_font.py` modifies the target file but backs it up to `<name>.mscz.bak` first.
+- The two `clean-*` scripts never touch your originals — they emit copies into `./cleaned/`. `replace_font.py` modifies each target file in place but backs it up to `_archive/tmp/<name>.mscz.bak` first.
 - Tested against the MuseScore 4 file format. The `.mss` style files and the `Edwin` default font in particular are MuseScore 4 conventions.

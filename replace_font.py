@@ -31,24 +31,30 @@ def replace_font_in_mscz(src: Path, dst: Path, old: str = OLD_FONT, new: str = N
     return total_replacements
 
 
-def main():
-    if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} <score.mscz>")
-        sys.exit(1)
-
-    src = Path(sys.argv[1])
+def process_one(src: Path) -> None:
     if not src.exists():
         print(f"File not found: {src}")
-        sys.exit(1)
+        return
 
-    backup = src.with_suffix(src.suffix + ".bak")
+    backup_dir = src.parent / "_archive" / "tmp"
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    backup = backup_dir / (src.name + ".bak")
     shutil.copy2(src, backup)
-    print(f"Backup written to: {backup}")
 
     tmp_out = src.with_suffix(".tmp.mscz")
     n = replace_font_in_mscz(src, tmp_out)
     tmp_out.replace(src)
-    print(f"Replaced {n} occurrences of '{OLD_FONT}' -> '{NEW_FONT}' in: {src}")
+    print(f"{src.name}: replaced {n} occurrences (backup: {backup.relative_to(src.parent)})")
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <score1.mscz> [score2.mscz ...]")
+        print(f"       {sys.argv[0]} *.mscz")
+        sys.exit(1)
+
+    for arg in sys.argv[1:]:
+        process_one(Path(arg))
 
 
 if __name__ == "__main__":

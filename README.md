@@ -48,7 +48,7 @@ The fonts are set by two constants at the top of the file:
 
 ```python
 OLD_FONT = "Edwin"        # MuseScore 4's default text font
-NEW_FONT = "aBGRSerif"
+NEW_FONT = "Liberation Serif"
 ```
 
 Change `NEW_FONT` to whatever font you want to switch to (for example `"Liberation Serif"`), and adjust `OLD_FONT` if your score uses a different starting font.

@@ -1,10 +1,54 @@
 # musescore-tweaks
 
-A few small command-line scripts for post-processing [MuseScore](https://musescore.org/) files and MusicXML exports: stripping baked-in layout breaks so a score reflows freely, and swapping out the default notation font.
+A few small command-line tools for working with [MuseScore](https://musescore.org/) files: batch-exporting scores to PDF and MusicXML, stripping baked-in layout breaks so a score reflows freely, and swapping out the default notation font.
 
-Everything here is plain Python 3 using only the standard library — no `pip install`, no dependencies. Each script operates on copies (or writes a backup) and leaves your originals intact.
+The three `clean-*`/`replace_font` scripts are plain Python 3 using only the standard library — no `pip install`, no dependencies — and each operates on copies (or writes a backup), leaving your originals intact. The batch export runs through a [fish](https://fishshell.com/) script that drives the MuseScore application itself; its one-time setup is described below.
+
+## Installing the MuseScore AppImage
+
+`export.fish` drives MuseScore Studio in converter mode, so it needs the application on disk. It expects a **portable AppImage** at a fixed path:
+
+```
+~/AppImages/musescore_studio_4.7_portable.appimage
+```
+
+Set it up once:
+
+```bash
+mkdir -p ~/AppImages
+# Download the MuseScore Studio portable AppImage from https://musescore.org/download
+# and save it to the path below, then make it executable:
+mv ~/Downloads/MuseScore-Studio-*.AppImage ~/AppImages/musescore_studio_4.7_portable.appimage
+chmod +x ~/AppImages/musescore_studio_4.7_portable.appimage
+```
+
+The path (and version) is hard-coded in `export.fish` via:
+
+```fish
+set APP ~/AppImages/musescore_studio_4.7_portable.appimage
+```
+
+If your AppImage lives elsewhere or is a different version, edit that line to match — or place your AppImage at the path above so the script works unchanged.
 
 ## Scripts
+
+### `export.fish` — batch-export every `.mscz` to PDF and MusicXML
+
+Run from a directory full of `.mscz` files. For each score it invokes the MuseScore AppImage with a generated [batch-conversion job](https://musescore.org/en/handbook/4/command-line-options) and writes the results into `exports/`:
+
+```fish
+./export.fish
+```
+
+Per score (`<name>.mscz`) it produces:
+
+- `exports/pdf/<name>.pdf` — the full score as a single PDF
+- `exports/pdf/<name>_1.pdf`, `<name>_2.pdf`, … — one PDF per page (via MuseScore's `[prefix, suffix]` split-output form)
+- `exports/mxml/<name>.musicxml` — a MusicXML export
+
+The output directories are created automatically. The script also points the MuseSampler instrument folder at `~/Muse Sounds` (`set -x MUSESAMPLER_INSTRUMENT_FOLDER "/home/$USER/Muse Sounds"`) so MuseScore can find the Muse Sounds libraries if they're installed; PDF and MusicXML export doesn't require them, so this is harmless if you don't have them.
+
+Requires the [fish shell](https://fishshell.com/) and the AppImage set up as described above. It reads `.mscz` files only from the current directory (no recursion) and leaves them untouched.
 
 ### `clean-mscz.py` — remove system breaks from `.mscz` files
 
@@ -48,7 +92,7 @@ The fonts are set by two constants at the top of the file:
 
 ```python
 OLD_FONT = "Edwin"        # MuseScore 4's default text font
-NEW_FONT = "Liberation Serif"
+NEW_FONT = "aBGRSerif"
 ```
 
 Change `NEW_FONT` to whatever font you want to switch to (for example `"Liberation Serif"`), and adjust `OLD_FONT` if your score uses a different starting font.

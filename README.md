@@ -16,23 +16,6 @@ If an OS-package installed Musescore on another place, create a link to ~/AppIma
 
 
 
-
-Set it up once:
-
-```bash
-mkdir -p ~/AppImages
-# Download the MuseScore Studio portable AppImage from https://musescore.org/download
-# and save it to the path below, then make it executable:
-mv ~/Downloads/MuseScore-Studio-*.AppImage ~/AppImages/musescore_studio_4.7_portable.appimage
-chmod +x ~/AppImages/musescore_studio_4.7_portable.appimage
-```
-
-The path (and version) is hard-coded in `export.fish` via:
-
-```fish
-set APP ~/AppImages/musescore_studio_4.7_portable.appimage
-```
-
 If your AppImage lives elsewhere or is a different version, edit that line to match — or place your AppImage at the path above so the script works unchanged.
 
 ## Scripts

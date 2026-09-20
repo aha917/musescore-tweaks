@@ -6,11 +6,16 @@ The three `clean-*`/`replace_font` scripts are plain Python 3 using only the sta
 
 ## Installing the MuseScore AppImage
 
-`export.fish` drives MuseScore Studio in converter mode, so it needs the application on disk. It expects a **portable AppImage** at a fixed path:
+`export.fish` drives MuseScore in converter mode, so it needs the application on disk. It expects a **portable AppImage** at a fixed path:
 
 ```
 ~/AppImages/musescore_studio_4.7_portable.appimage
 ```
+
+If an OS-package installed Musescore on another place, create a link to ~/AppImages/musescore_studio_4.7_portable.appimage
+
+
+
 
 Set it up once:
 
